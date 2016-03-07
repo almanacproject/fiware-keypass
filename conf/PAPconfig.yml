@@ -8,7 +8,7 @@ server:
       port: 8081
       bindHost: 127.0.0.1
 
-tenantHeader: Fiware-Service
+tenantHeader: AM-Service
 
 # SteelSkinPep can perform a XACML request using several subject-id in the
 # accesss-subject field
@@ -21,13 +21,9 @@ database:
   # the name of your JDBC driver
   driverClass: com.mysql.jdbc.Driver
 
-  # the username
-  user: keypass
+  user: AMpap
+  password: DB_PAPR5xuJyEiA5oq/Q6edM5LVVaJNeJwiUO1
 
-  # the password
-  password: keypass
-
-  # the JDBC URL
   url: jdbc:mysql://localhost/keypass
 
   # any properties specific to your JDBC driver:
