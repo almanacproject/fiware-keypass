@@ -1,0 +1,16 @@
+#!/bin/sh
+
+curl -s -i -H "Accept: application/xml" -H "Content-type: application/xml"\
+     -H "AM-Service: TEST" --cacert ./pub_certs/AMpap.pem \
+     -X POST -d @../src/test/resources/es/tid/fiware/iot/ac/xacml/policy01.xml \
+     https://localhost:8443/pap/v1/subject/role12345
+
+curl -s -i -H "Accept: application/xml" -H "Content-type: application/xml"\
+     -H "AM-Service: TEST" --cacert ./pub_certs/AMpdp.pem \
+     -X POST -d @../src/test/resources/es/tid/fiware/iot/ac/xacml/policy01_request01.xml\
+     https://localhost:8444/pdp/v3/ | grep Permit
+
+curl -s -i -H "Accept: application/xml" -H "Content-type: application/xml"\
+     -H "AM-Service: TEST" --cacert ./pub_certs/AMpdp.pem \
+     -X POST -d @../src/test/resources/es/tid/fiware/iot/ac/xacml/policy01_request02.xml\
+     https://localhost:8444/pdp/v3/ | grep Deny
