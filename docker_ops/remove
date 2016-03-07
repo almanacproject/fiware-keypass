@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker stop -t 1 AMpap AMpdp AMdb
+docker rm AMpap AMpdp AMdb

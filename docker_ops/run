@@ -1,0 +1,17 @@
+#!/bin/sh
+
+
+
+docker run --name AMdb\
+    -e MYSQL_ROOT_PASSWORD=testalma\
+    -e MYSQL_DATABASE=AMdb\
+    -d mariadb
+
+sleep 15
+docker exec -i AMdb mysql -u'root' -p'testalma' < ./AM.sql
+docker run --name AMpap --link=AMdb:db \
+    -v "$(realpath .)"/pap/conf:/opt/keypass/conf:ro \
+    -h AMpap -p 8443:8443 -d keypasspap
+docker run --name AMpdp --link=AMdb:db -v \
+    "$(realpath .)"/pdp/conf:/opt/keypass/conf:ro \
+    -h AMpdp -p 8444:8443 -d keypasspdp

@@ -15,11 +15,23 @@ target/
 build/
 dist/
 
+pom/p?p/target
+pom/p?p/build/
+pom/p?p/dist/
+
+*.store
+*.cer
+
 # IDE files
+## IntellyJ
 *.ipr
 *.iml
 *.iws
 *.idea
+## Vim
+*.swp
+
+
 
 nbactions.xml
 nb-configuration.xml
