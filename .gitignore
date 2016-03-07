@@ -19,8 +19,14 @@ pom/p?p/target
 pom/p?p/build/
 pom/p?p/dist/
 
-*.store
-*.cer
+#docker files
+docker_ops/files/AM.sql
+docker_ops/pap/conf/
+docker_ops/pdp/conf/
+docker_ops/pub_certs/
+
+docker_ops/*.store
+docker_ops/*.cer
 
 # IDE files
 ## IntellyJ
