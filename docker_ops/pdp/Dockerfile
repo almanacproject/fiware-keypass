@@ -12,7 +12,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk.x86_64
 ## Install MySQL client
 RUN yum -y install mysql
 
-ADD keypassPDP-0.4.2.jar /opt/keypass/keypassPDP.jar
+ADD keypassPDP.jar /opt/keypass/keypassPDP.jar
 
 CMD java -jar /opt/keypass/keypassPDP.jar server /opt/keypass/conf/config.yml
 

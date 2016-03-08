@@ -12,7 +12,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk.x86_64
 ## Install MySQL client
 RUN yum -y install mysql
 
-ADD keypassPAP-0.4.2.jar /opt/keypass/keypassPAP.jar
+ADD keypassPAP.jar /opt/keypass/keypassPAP.jar
 
 CMD java -jar /opt/keypass/keypassPAP.jar db migrate /opt/keypass/conf/config.yml && java -jar /opt/keypass/keypassPAP.jar server /opt/keypass/conf/config.yml
 

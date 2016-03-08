@@ -7,8 +7,8 @@ mkdir -p files
 mvn -f ../pom/pap/pom.xml clean package
 mvn -f ../pom/pdp/pom.xml clean package
 
-cp ../pom/pap/target/keypassPAP-0.4.2.jar ./pap/
-cp ../pom/pdp/target/keypassPDP-0.4.2.jar ./pdp/
+cp ../pom/pap/target/keypassPAP-?.?.?.jar ./pap/keypassPAP.jar
+cp ../pom/pdp/target/keypassPDP-?.?.?.jar ./pdp/keypassPDP.jar
 
 docker build --rm -t keypasspap pap
 docker build --rm -t keypasspdp pdp
