@@ -78,7 +78,7 @@ database_pdp_pw="DB_PDP$(create_pw)"
 printf "."
 keystore_pdp_pw="KS_PDP$(create_pw)"
 printf " done.\n"
-printf "The passwords for the PAP and PDP can be found inside there config files.\n"
+printf "The passwords for the PAP and PDP are stored inside there config files.\n"
 
 mkdir -p -- "$PUB_CERTS"
 mkdir -p -- ./pap/conf/
@@ -107,15 +107,19 @@ replace_pws "$database_pap_pw" "$keystore_pap_pw" \
             < ./files/AM.sql.template \
             > ./files/AM.sql
 
-printf "Wait for database to start ..."
-sleep 15
+printf "Wait for database to start ."
+
+until printf ""| docker exec -i AMdb mysql -u'root' -p"$database_root_pw" > /dev/null 2>&1; do
+    printf "."
+    sleep 1
+done
 printf " done.\n"
 printf "Setting up database. \n"
 docker exec -i AMdb mysql -u'root' -p"$database_root_pw" < ./files/AM.sql
 printf "Starting PAP and PDP containers. \n"
 docker run --name AMpap --link=AMdb:db \
-    -v "$(realpath .)"/pap/conf:/opt/keypass/conf:ro \
+    -v "$PWD"/pap/conf:/opt/keypass/conf:ro \
     -h AMpap -p 8443:8443 -d keypasspap
-docker run --name AMpdp --link=AMdb:db -v \
-    "$(realpath .)"/pdp/conf:/opt/keypass/conf:ro \
+docker run --name AMpdp --link=AMdb:db \
+    -v "$PWD"/pdp/conf:/opt/keypass/conf:ro \
     -h AMpdp -p 8444:8443 -d keypasspdp
