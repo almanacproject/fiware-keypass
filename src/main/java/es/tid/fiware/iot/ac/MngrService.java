@@ -69,12 +69,6 @@ public class MngrService extends io.dropwizard.Application<MngrConfig> {
     public void run(MngrConfig configuration, Environment environment) throws Exception {
 
         PolicyDao dao = new PolicyDAOHibernate(hibernate.getSessionFactory());
-        PdpFactory pdpFactory = new PdpFactoryCached(dao,
-                new BlockingCacheFactory(
-                        configuration.getPdpCacheConfig().getTimeToLiveSeconds(),
-                        configuration.getPdpCacheConfig().getMaxEntriesLocalHeap()),
-                                                     configuration.getSteelSkinPepMode());
-
         environment.servlets().addFilter("myFilter", new MDCFilter()).addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
 
         environment.jersey().register(new TenantProvider(configuration.getTenantHeader()));
