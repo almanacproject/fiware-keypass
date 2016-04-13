@@ -6,7 +6,7 @@ Keypass is multi-tenant XACML server with PAP (Policy Administration Point) and
 PDP (Policy Decision Point) capabilities.
 
 Tenancy is defined by means of an HTTP header. Default configuration uses
-`Fiware-Service` as the tenant header name, but it can be easily changed
+`AM-Service` as the tenant header name, but it can be easily changed
 modifying it in the config file.
 
 The PDP endpoint will evaluate the Policies for the subjects contained in a
@@ -31,6 +31,7 @@ they are not resources _per se_.
 
 ## PAP API
 
+
 ### Create or update a policy
 
 ```
@@ -52,7 +53,7 @@ Examples:
 POST /pap/v1/subject/role12345 HTTP/1.1
 Content-type: application/xml
 Accept: application/xml
-Fiware-Service: myTenant
+tenantHeader: myTenant
 
 <Policy xsi:schemaLocation="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17
     http://docs.oasis-open.org/xacml/3.0/xacml-core-v3-schema-wd-17.xsd"
@@ -120,7 +121,7 @@ Example:
 
 ```
 GET http://localhost:8080/pap/v1/subject/role12345/policy/policy03
-Fiware-Service: myTenant
+tenantHeader: myTenant
 ```
 
 Response
@@ -189,7 +190,7 @@ Example:
 
 ```
 DELETE http://localhost:8080/pap/v1/subject/role12345/policy/policy03
-Fiware-Service: myTenant
+tenantHeader: myTenant
 ```
 
 Response
@@ -260,7 +261,7 @@ Exmple:
 
 ```
 GET http://localhost:8080/pap/v1/subject/role12345
-Fiware-Service: myTenant
+tenantHeader: myTenant
 ```
 
 Response
@@ -288,7 +289,7 @@ Example:
 
 ```
 DELETE http://localhost:8080/pap/v1/subject/role12345
-Fiware-Service: myTenant
+tenantHeader: myTenant
 ```
 
 Response
@@ -311,7 +312,7 @@ Example:
 
 ```
 DELETE http://localhost:8080/pap/v1
-Fiware-Service: myTenant
+tenantHeader: myTenant
 ```
 
 Response
@@ -319,7 +320,6 @@ Response
 ```HTTP
 HTTP/1.1 204 No Content
 ```
-
 
 ## PDP API
 
@@ -338,7 +338,7 @@ Example:
 
 ```HTTP
 POST /pdp/v3
-Fiware-Service: myTenant
+tenantHeader: myTenant
 Content-type: application/xml
 Accept: application/xml
 

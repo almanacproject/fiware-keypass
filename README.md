@@ -100,7 +100,7 @@ This chapter is describes the use for the Docker containers, when started with t
 
 ```
 curl -k -i -H "Accept: application/xml" -H "Content-type: application/xml" \
-    -H "Fiware-Service: myTenant" \
+    -H "tenantHeader: myTenant" \
     -X POST -d @src/test/resources/es/tid/fiware/iot/ac/xacml/policy01.xml \
     https://localhost:8443/pap/v1/subject/role12345
 ```
@@ -118,7 +118,7 @@ Content-Length: 0
 ## Retrieve a policy
 
 ```
-curl -k -i -H "Fiware-Service: myTenant" \
+curl -k -i -H "tenantHeader: myTenant" \
     https://localhost:8443/pap/v1/subject/role12345/policy/policy01
 ```
 
@@ -128,7 +128,7 @@ Response will be the previously uploaded policy.
 
 ```
 curl -k -i -H "Accept: application/xml" -H "Content-type: application/xml" \
-    -H "Fiware-Service: myTenant" \
+    -H "tenantHeader: myTenant" \
     -X POST -d @src/test/resources/es/tid/fiware/iot/ac/xacml/policy01_request01.xml \
     https://localhost:8444/pdp/v3
 ```
