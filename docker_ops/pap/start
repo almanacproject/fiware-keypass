@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+
+java -jar /opt/keypass/keypassPAP.jar db migrate /opt/keypass/conf/config.yml
+java -jar /opt/keypass/keypassPAP.jar server /opt/keypass/conf/config.yml

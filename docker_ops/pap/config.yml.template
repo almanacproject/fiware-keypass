@@ -4,7 +4,7 @@ server:
       port: 8443
       bindHost: 0.0.0.0
       keyStorePath: /opt/keypass/conf/key.store
-      keyStorePassword: KEYSTORE_PAP_PASSWORD
+      keyStorePassword: '$${bob.AMpap.password}'
       keyStoreType: JKS
       validateCerts: false
       validatePeers: false
@@ -48,9 +48,9 @@ database:
   driverClass: com.mysql.jdbc.Driver
 
   user: AMpap
-  password: DATABASE_PAP_PASSWORD
+  password: '$${psst.database_pap_pw}'
 
-  url: jdbc:mysql://db/keypass
+  url: jdbc:mysql://amdb/keypass
 
   # any properties specific to your JDBC driver:
   properties:

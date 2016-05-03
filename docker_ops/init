@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+. env/bin/activate
+
+
+mkdir -p -- ./volumes/pap/
+mkdir -p -- ./volumes/pdp/
+mkdir -p -- ./volumes/db/
+
+printf "Init Certificates ans passwords.\n"
+(psst config.json; bob config.json ) | jq -s '{ "psst": .[0], "bob":.[1] }' > volumes/init.json
+
+cp ./certs/AMpap/AMpap.keystore.jks ./volumes/pap/key.store
+cp ./certs/AMpdp/AMpdp.keystore.jks ./volumes/pdp/key.store
+
+printf "Create ./volumes/pap/config.yml config file.\n"
+rework ./pap/config.yml.template < volumes/init.json > ./volumes/pap/config.yml
+
+printf "Create ./volumes/pdp/config.yml config file.\n"
+rework ./pdp/config.yml.template < volumes/init.json > ./volumes/pdp/config.yml
+
+printf "Create ./volumes/db/AM.sql SQL init commands file.\n"
+rework ./db/AM.sql.template < volumes/init.json > ./volumes/db/AM.sql

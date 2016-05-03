@@ -1,23 +1,37 @@
-db:
-  image: mysql
-  expose:
-    - "3306"
-  ports:
-    - "3307:3306"
-  environment:
-    MYSQL_ROOT_PASSWORD: keypass
-    MYSQL_DATABASE: keypass
-    MYSQL_USER: keypass
-    MYSQL_PASSWORD: keypass
+version: '2'
+services:
+    amdb:
+      image: mariadb
+      expose:
+        - "3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: keypass
+      volumes:
+          - ./volumes/db/:/docker-entrypoint-initdb.d:ro
 
-keypass:
-  build: .
-  links:
-    - db
-  expose:
-    - "7070"
-    - "7071"
-  ports:
-    - "7170:7070"
-    - "7171:7071"
+    ampap:
+      build: ./pap/
+      command: ["/opt/keypass/start"]
+      entrypoint: ["/opt/keypass/wait-for-it.sh", "amdb:3306", "--"]
+      links:
+        - amdb
+      depends_on:
+        - amdb
+      ports:
+        - "8443:8443"
+      volumes:
+          - ./volumes/pap/:/opt/keypass/conf:ro
+
+    ampdp:
+      build: ./pdp/
+      command: ["/opt/keypass/start"]
+      entrypoint: ["/opt/keypass/wait-for-it.sh", "amdb:3306", "--"]
+      links:
+        - amdb
+      depends_on:
+        - amdb
+      ports:
+        - "8444:8443"
+      volumes:
+          - ./volumes/pdp/:/opt/keypass/conf:ro
 

@@ -41,3 +41,13 @@ docker_ops/*.cer
 
 nbactions.xml
 nb-configuration.xml
+
+#Docker Ops
+docker_ops/certs
+docker_ops/env
+docker_ops/pap/wait-for-it.sh
+docker_ops/pdp/wait-for-it.sh
+docker_ops/volumes
+
+
+

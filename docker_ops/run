@@ -1,111 +1,15 @@
 #!/bin/sh
 
-PUB_CERTS=./pub_certs
-
-# Create a random password
-# 
-# The password a a entropy of 33 bytes and is encoded in base64 so it has 45 character in the end
-# 
-create_pw() {
-    head -c24 < /dev/random | base64
-}
-
-
-# Replace a password strings from stdin and print out the result to stdout
-# 
-# replaces the strings 
-#    DATABASE_PAP_PASSWORD
-#    KEYSTORE_PAP_PASSWORD
-#    DATABASE_PDP_PASSWORD
-#    KEYSTORE_PDP_PASSWORD
-# with the correct password
-replace_pws() {
-    database_pap_pw="$1"
-    keystore_pap_pw="$2"
-    database_pdp_pw="$3"
-    keystore_pdp_pw="$4"
-    sed -e 's!DATABASE_PAP_PASSWORD!'"$database_pap_pw"'!' \
-        -e 's!KEYSTORE_PAP_PASSWORD!'"$keystore_pap_pw"'!' \
-        -e 's!DATABASE_PDP_PASSWORD!'"$database_pdp_pw"'!' \
-        -e 's!KEYSTORE_PDP_PASSWORD!'"$keystore_pdp_pw"'!'
-}
-
-# Create a certificate for the named service and store it in the specified
-# directory
-# 
-# The function takes in a name <service_name> and creates a certificate for the service.
-# The certificate is then stored in the given path <path_to_new_keystore>.
-# 
-# Usage:
-# create_cert <service_name> <path_to_new_keystore>
-
-create_cert() {
-    name="$1"
-    keystore="$2"
-    priv_storepass="$3"
-    dir="$(dirname -- "$keystore")"
-    mkdir -p -- "$dir"
-    rm -- "$keystore"
-    printf "creating key store for %s in %s (%s)\n" "$name" "$keystore" "$priv_storepass"
-    keytool -keystore "$keystore" -storepass "$priv_storepass" \
-        -alias "$name" -keypass "$priv_storepass" \
-        -genkeypair -keyalg RSA -keysize 2048 \
-        -dname 'CN=localhost, OU=Example Team, O="Examples, Inc.", L=Exampleville, ST=Examplia, C=EX' \
-        -validity 730  
-
-    printf "Public "
-
-    keytool -keystore "$keystore" -storepass "$priv_storepass" \
-        -alias "$name" -keypass "$priv_storepass" \
-        -export -file "$PUB_CERTS"/"$name".cer
-}
-
-database_root_pw=$(create_pw)
+database_root_pw=$(jq --raw-output '.psst.database_root_pw' init.json)
 
 
 printf "Start database container. \n"
-docker run --name AMdb -e MYSQL_ROOT_PASSWORD="$database_root_pw" -d  mariadb
+docker run --name AMdb -e MYSQL_ROOT_PASSWORD="$database_root_pw" \
+    -v "$PWD"/volumes/db:/docker-entrypoint-initdb.d:ro \
+    -d  mariadb 
 printf "Root password for Database: %s\n" "$database_root_pw"
 printf "Maybe you should write it down somewhere!\n"
 
-printf "\n Creating passwords this might take some time "
-printf "."
-database_pap_pw="DB_PAP$(create_pw)"
-printf "."
-keystore_pap_pw="KS_PAP$(create_pw)"
-printf "."
-database_pdp_pw="DB_PDP$(create_pw)"
-printf "."
-keystore_pdp_pw="KS_PDP$(create_pw)"
-printf " done.\n"
-printf "The passwords for the PAP and PDP are stored inside there config files.\n"
-
-mkdir -p -- "$PUB_CERTS"
-mkdir -p -- ./pap/conf/
-mkdir -p -- ./pdp/conf/
-
-create_cert AMpap ./pap/conf/key.store "$keystore_pap_pw"
-create_cert AMpdp ./pdp/conf/key.store "$keystore_pdp_pw"
-openssl x509 -inform der -in pub_certs/AMpap.cer -out pub_certs/AMpap.pem
-openssl x509 -inform der -in pub_certs/AMpdp.cer -out pub_certs/AMpdp.pem
-
-printf "Create ./pap/conf/config.yml. \n"
-replace_pws "$database_pap_pw" "$keystore_pap_pw" \
-            "$database_pdp_pw" "$keystore_pdp_pw" \
-            < ./pap/config.yml.template \
-            > ./pap/conf/config.yml
-
-printf "Create ./pdp/conf/config.yml. \n"
-replace_pws "$database_pap_pw" "$keystore_pap_pw" \
-            "$database_pdp_pw" "$keystore_pdp_pw" \
-            < ./pdp/config.yml.template \
-            > ./pdp/conf/config.yml 
-
-printf "Create ./files/AM.sql. \n"
-replace_pws "$database_pap_pw" "$keystore_pap_pw" \
-            "$database_pdp_pw" "$keystore_pdp_pw" \
-            < ./files/AM.sql.template \
-            > ./files/AM.sql
 
 printf "Wait for database to start ."
 
@@ -114,12 +18,10 @@ until printf ""| docker exec -i AMdb mysql -u'root' -p"$database_root_pw" > /dev
     sleep 1
 done
 printf " done.\n"
-printf "Setting up database. \n"
-docker exec -i AMdb mysql -u'root' -p"$database_root_pw" < ./files/AM.sql
 printf "Starting PAP and PDP containers. \n"
-docker run --name AMpap --link=AMdb:db \
-    -v "$PWD"/pap/conf:/opt/keypass/conf:ro \
-    -h AMpap -p 8443:8443 -d keypasspap
-docker run --name AMpdp --link=AMdb:db \
-    -v "$PWD"/pdp/conf:/opt/keypass/conf:ro \
+docker run --restart=always --name AMpap --link=AMdb:db \
+    -v "$PWD"/volumes/pap:/opt/keypass/conf:ro \
+    -h AMpap -p 8443:8443 -d keypasspap 
+docker run --restart=always --name AMpdp --link=AMdb:db \
+    -v "$PWD"/volumes/pdp:/opt/keypass/conf:ro \
     -h AMpdp -p 8444:8443 -d keypasspdp

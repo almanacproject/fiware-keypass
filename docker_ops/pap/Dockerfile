@@ -1,19 +1,13 @@
-FROM centos:7
+FROM java:alpine
 
-MAINTAINER IoT team
-
-RUN yum update -y && yum install -y wget
-# RUN wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-# RUN yum localinstall -y --nogpgcheck epel-release-6-8.noarch.rpm
-RUN yum install -y rpm-build java-1.8.0-openjdk
-
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk.x86_64
-
-## Install MySQL client
-RUN yum -y install mysql
+MAINTAINER Raphael Ahrens
 
 ADD keypassPAP.jar /opt/keypass/keypassPAP.jar
+ADD wait-for-it.sh /opt/keypass/wait-for-it.sh
+RUN chmod +x /opt/keypass/wait-for-it.sh
+ADD start /opt/keypass/start
+RUN chmod +x /opt/keypass/start
 
-CMD java -jar /opt/keypass/keypassPAP.jar db migrate /opt/keypass/conf/config.yml && java -jar /opt/keypass/keypassPAP.jar server /opt/keypass/conf/config.yml
+CMD ["/opt/keypass/start"]
 
 EXPOSE 8443
