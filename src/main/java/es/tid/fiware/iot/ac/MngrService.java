@@ -32,7 +32,10 @@ import es.tid.fiware.iot.ac.pdp.PdpFactory;
 import es.tid.fiware.iot.ac.pdp.PdpFactoryCached;
 import es.tid.fiware.iot.ac.rs.TenantHeaderFilter;
 import es.tid.fiware.iot.ac.rs.TenantProvider;
+import es.tid.fiware.iot.ac.rs.CorrelatorHeaderFilter;
+import es.tid.fiware.iot.ac.rs.CorrelatorProvider;
 import es.tid.fiware.iot.ac.util.BlockingCacheFactory;
+import es.tid.fiware.iot.ac.util.LogsEndpoint;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
@@ -72,8 +75,11 @@ public class MngrService extends io.dropwizard.Application<MngrConfig> {
         environment.servlets().addFilter("myFilter", new MDCFilter()).addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
 
         environment.jersey().register(new TenantProvider(configuration.getTenantHeader()));
+        environment.jersey().register(new CorrelatorProvider(configuration.getCorrelatorHeader()));
         environment.jersey().getResourceConfig().getContainerResponseFilters().add(
                 new TenantHeaderFilter(configuration.getTenantHeader()));
+        environment.jersey().getResourceConfig().getContainerResponseFilters().add(
+                new CorrelatorHeaderFilter(configuration.getCorrelatorHeader()));
 
         environment.jersey().register(new TenantEndpoint(dao));
         environment.jersey().register(new SubjectEndpoint(dao));

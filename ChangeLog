@@ -1,3 +1,18 @@
+1.0.0
+
+return 204 at delete policy from role
+
+0.5.0
+
+Update CI script
+
+0.4.4
+
+Add Fiware-Correlator header
+Add API to change Keypass logLevel
+Fix docker support: start daemon
+
+
 0.4.3
 
 FIX BUG in steelskin_pep_mode about string comparation
