@@ -10,7 +10,7 @@ mkdir -p -- ./volumes/pdp/
 mkdir -p -- ./volumes/db/
 
 printf "Init Certificates ans passwords.\n"
-(psst config.json; bob config.json ) | jq -s '{ "psst": .[0], "bob":.[1] }' > volumes/init.json
+printf '{ "psst": %s, "bob": %s }\n' "$(psst config.json)" "$(bob config.json)" > volumes/init.json
 
 cp ./certs/AMpap/AMpap.keystore.jks ./volumes/pap/key.store
 cp ./certs/AMpdp/AMpdp.keystore.jks ./volumes/pdp/key.store

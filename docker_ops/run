@@ -1,6 +1,6 @@
 #!/bin/sh
 
-database_root_pw=$(jq --raw-output '.psst.database_root_pw' init.json)
+database_root_pw=$(jq --raw-output '.psst.database_root_pw' volumes/init.json)
 
 
 printf "Start database container. \n"
