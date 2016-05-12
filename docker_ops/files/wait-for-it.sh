@@ -23,8 +23,11 @@
 
 cmdname=$(basename "$0")
 
-echoerr() { if [ "$QUIET" -ne 1 ]; then
-    printf "%s\n" "$*" 1>&2; fi }
+echoerr() {
+    if [ "$QUIET" -ne 1 ]; then
+        printf "%s\n" "$*" 1>&2;
+    fi
+}
 
 usage()
 {
@@ -153,9 +156,7 @@ if [ "$*" != "" ]; then
         echoerr "$cmdname: strict mode, refusing to execute subprocess"
         exit $RESULT
     fi
-    printf "LOL\n"
     exec "$@"
 else
-    printf "LOL2\n"
     exit $RESULT
 fi
