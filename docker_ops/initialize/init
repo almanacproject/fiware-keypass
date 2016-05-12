@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+mkdir -p -- /opt/volumes/am/pap/
+mkdir -p -- /opt/volumes/am/pdp/
+mkdir -p -- /opt/volumes/am/db/
+
+cd /opt/volumes/am/
+
+printf "Init Certificates ans passwords.\n"
+printf '{ "psst": %s, "bob": %s }\n' \
+    "$(psst /opt/input/config.json)" "$(bob /opt/input/config.json)" > /opt/volumes/am/init.json
+
+cp /opt/volumes/am/certs/AMpap/AMpap.keystore.jks /opt/volumes/am/pap/key.store
+cp /opt/volumes/am/certs/AMpdp/AMpdp.keystore.jks /opt/volumes/am/pdp/key.store
+
+printf "Create volumes/am/pap/config.yml config file.\n"
+rework /opt/input/pap/config.yml.template < /opt/volumes/am/init.json > /opt/volumes/am/pap/config.yml
+
+printf "Create volumes/am/pdp/config.yml config file.\n"
+rework /opt/input/pdp/config.yml.template < /opt/volumes/am/init.json > /opt/volumes/am/pdp/config.yml
+
+printf "Create volumes/am/db/AM.sql SQL init commands file.\n"
+rework /opt/input/db/AM.sql.template < /opt/volumes/am/init.json > /opt/volumes/am/db/AM.sql
