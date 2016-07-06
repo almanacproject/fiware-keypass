@@ -41,52 +41,37 @@ java -jar target/keypassPDP-<VERSION>.jar server conf/PDPconfig.yml
 
 # Docker
 
-Under the path `./docker_ops/` are three script to setup a docker instance of the KeyPass servers.
+There are two docker image from the ALMANAC project
 
-1. the `build` script creates the docker images.
-1. the `run` script creates and runs the container
-1. the `remove` script stops the containers and removes the images
-1. test `test` script which creates a policy and sends two queries for this policy.
+* [almanacproject/keypasspap](https://hub.docker.com/r/almanacproject/keypasspap/) the PAP interface
+* [almanacproject/keypasspdp](https://hub.docker.com/r/almanacproject/keypasspdp/) the PDP interface
+
+If you want to build your own images you can find a docker compose file under `./docker_ops/docker-compose.yml`, which which you can build and run your keypass instance.
 
 ## Build
 
-The docker images can be build with `./docker_ops/build` script and downloads the latest image for a mariadb container.
-In the build the jar files for the docker images for the PDP and PAP are created.
+To build the images you need to go to the folder `./docker_ops/` and run
 
-The images have the names `keypasspap` and `keypasspdp`.
+```
+./build
+```
+
+The `build` script first creates the JAR files for you and then creates certificates and random passwords which can be used by the docker images.
 
 ## Running the docker containers
 
-The new images can be started with the `./docker_ops/run` script.
+You can start the containers with `docker-compose` by executing
 
-The `run` script creates
+```
+docker-compose up
+```
 
-1. new users and passwords for the PAP and PDP in the database
-1. self signed certificates for the PAP and PDP,
-1. the configuration files for the PAP and PDP, and
-1. create the public certificates of the self-signed certificates for the PAP and PDP under `./docker_ops/pub_certs/`.
+This starts the database under the name amdb.
 
-After this initialisation three containers are started with the `docker run` command.
-The first is the database with the name AMdb.
-Since the database needs quite a lot of time to start, there is a time delay of 15 seconds before the other containers are started.
-
-The second container is the PAP with the name AMpap and
-the third container is the PDP with the name AMpdp.
-Both containers expose the port 8443.
+The second container is the PAP with the name ampap and
+the third container is the PDP with the name ampdp.
+Both the ampap and the ampdp expose the port 8443.
 For convince the ports are mapped to the host system the PAP is under port 8443 and the PDP is under port 8444 of the host.
-
-After the first use of the `run` script the containers can be manged with the usual docker commands (stop, start,...).
-
-## Removing the containers
-
-The `remove` script stops and removes the containers.
-It was created so the result of the `run` script can be quickly removed.
-
-For example with
-
-```
-./remove; ./run
-```
 
 ## Testing the containers
 
@@ -100,12 +85,12 @@ This chapter is describes the use for the Docker containers, when started with t
 
 ```
 curl -k -i -H "Accept: application/xml" -H "Content-type: application/xml" \
-    -H "tenantHeader: myTenant" \
+    -H "tenantHeader: AM-Service" \
     -X POST -d @src/test/resources/es/tid/fiware/iot/ac/xacml/policy01.xml \
     https://localhost:8443/pap/v1/subject/role12345
 ```
 
-Response should be something like this:
+Response should be something similar to:
 
 ```
 HTTP/1.1 201 Created
