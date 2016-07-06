@@ -103,7 +103,7 @@ Content-Length: 0
 ## Retrieve a policy
 
 ```
-curl -k -i -H "tenantHeader: myTenant" \
+curl -k -i -H "tenantHeader: AM-Service" \
     https://localhost:8443/pap/v1/subject/role12345/policy/policy01
 ```
 
@@ -113,7 +113,7 @@ Response will be the previously uploaded policy.
 
 ```
 curl -k -i -H "Accept: application/xml" -H "Content-type: application/xml" \
-    -H "tenantHeader: myTenant" \
+    -H "tenantHeader: AM-Service" \
     -X POST -d @src/test/resources/es/tid/fiware/iot/ac/xacml/policy01_request01.xml \
     https://localhost:8444/pdp/v3
 ```
