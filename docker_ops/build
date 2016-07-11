@@ -21,9 +21,10 @@ virtualenv env --python=python3
 
 . env/bin/activate
 
-pip install git+https://github.com/tantSinnister/rework.git
-pip install git+https://github.com/tantSinnister/psst.git
-pip install git+https://github.com/tantSinnister/bob_cert_builder.git
+pip install PyYAML \
+            git+https://github.com/tantSinnister/rework.git@v0.0.2 \
+            git+https://github.com/tantSinnister/psst.git@v0.0.2 \
+            git+https://github.com/tantSinnister/bob_cert_builder.git@v0.0.2
 
 deactivate
 

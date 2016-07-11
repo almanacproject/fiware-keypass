@@ -1,0 +1,33 @@
+bob:
+    default_key_alg: "EC -pkeyopt ec_paramgen_curve:prime256v1 -pkeyopt ec_param_enc:named_curve"
+    services:
+          - name: AMpap
+            subject_str: "/C=DE/ST=NRW/L=Sankt Augustine/O=Fraunhofer/OU=FIT/CN=localhost"
+            confidants: [operator]
+            formats: JKS
+
+          - name: AMpdp
+            subject_str: "/C=DE/ST=NRW/L=Sankt Augustine/O=Fraunhofer/OU=FIT/CN=localhost"
+            confidants: [operator, client]
+            formats: JKS
+
+          - name: operator
+            subject_str: "/C=DE/ST=NRW/L=Sankt Augustine/O=Fraunhofer/OU=FIT/CN=Operator"
+            confidants: []
+            formats: PEM
+
+          - name: client
+            subject_str: "/C=DE/ST=NRW/L=Sankt Augustine/O=Fraunhofer/OU=FIT/CN=Client"
+            confidants: []
+            formats: PEM
+psst:
+    passwords:
+       - "database_root_pw"
+       - "database_pap_pw"
+       - "database_pdp_pw"
+    length: 20
+rework:
+    templates:
+        - ["./pap/config.yml.template", "./volumes/pap/config.yml"]
+        - ["./pdp/config.yml.template", "./volumes/pdp/config.yml"]
+        - ["./db/AM.sql.template", "./volumes/db/AM.sql"]

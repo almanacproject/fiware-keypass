@@ -9,17 +9,9 @@ mkdir -p -- ./volumes/pap/
 mkdir -p -- ./volumes/pdp/
 mkdir -p -- ./volumes/db/
 
-printf "Init Certificates ans passwords.\n"
-printf '{ "psst": %s, "bob": %s }\n' "$(psst config.json)" "$(bob config.json)" > volumes/init.json
-
+printf "Init Certificates and passwords and creating config files.\n"
+printf '{ "psst": %s, "bob": %s }\n' "$(psst config.yml)" "$(bob config.yml)" | rework config.yml
 cp ./certs/AMpap/AMpap.keystore.jks ./volumes/pap/key.store
 cp ./certs/AMpdp/AMpdp.keystore.jks ./volumes/pdp/key.store
 
-printf "Create ./volumes/pap/config.yml config file.\n"
-rework ./pap/config.yml.template < volumes/init.json > ./volumes/pap/config.yml
-
-printf "Create ./volumes/pdp/config.yml config file.\n"
-rework ./pdp/config.yml.template < volumes/init.json > ./volumes/pdp/config.yml
-
-printf "Create ./volumes/db/AM.sql SQL init commands file.\n"
-rework ./db/AM.sql.template < volumes/init.json > ./volumes/db/AM.sql
+printf "Done.\n"
